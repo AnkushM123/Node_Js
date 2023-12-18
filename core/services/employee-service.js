@@ -1,5 +1,5 @@
 
-const employeeModel = require('../../schema/employee-schema');
+const employeeModel = require('../schema/employee-schema');
 
 const getEmployee = async function () {
     try {
@@ -7,6 +7,7 @@ const getEmployee = async function () {
         return data;
     } catch (err) {
         console.log(err);
+        return 
     }
 
 }

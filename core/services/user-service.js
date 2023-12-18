@@ -1,5 +1,5 @@
 
-const userModel = require('../../schema/user-schema');
+const userModel = require('../schema/user-schema');
 
 const getUser = async function () {
     try {
@@ -18,7 +18,6 @@ const getUserById = async function (id) {
     } catch (err) {
         console.log(err);
     }
-
 }
 
 const createUser = async function (user) {

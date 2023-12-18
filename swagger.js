@@ -16,6 +16,6 @@ const options = {
    apis: ['./apis/*']
 }
 
-const swaggerSpecs = swaggerJSDoc(options)
+let swaggerSpecs = swaggerJSDoc(options)
 
 module.exports = swaggerSpecs;

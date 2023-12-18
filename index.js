@@ -9,7 +9,7 @@ const swaggerSpecs = require('./swagger');
 
 app.use(cors());
 app.use(express.json());
-app.use('/Images', express.static('Images'));
+app.use('/images', express.static('images'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use("/employee", employeeRoute);
 app.use("/user", userRoute);
