@@ -11,7 +11,16 @@ const options = {
          {
             url: 'http://localhost:3000'
          }
-      ]
+      ],
+      securityDefinitions: {
+         bearerAuth: {
+             type: 'apiKey',
+             name: 'Authorization',
+             scheme: 'bearer',
+             in: 'header',
+         },
+     }
+ 
    },
    apis: ['./apis/*']
 }

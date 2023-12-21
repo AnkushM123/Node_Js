@@ -1,16 +1,12 @@
-const express = require('express');
-const app = express();
 const employeeService = require('../core/services/employee-service')
-const upload = require('../Image-api');
 const employeeModel = require('../core/schema/employee-schema');
-const cors = require('cors')
-app.use(cors())
-const employeeRoute = express.Router();
 
 /**
 *  @swagger
 * /employee:
 *   get:
+*     security: 
+*          - Bearer: []
 *     description: Get a list of all employees
 *     tags: [Employee]
 *     produces:
@@ -47,20 +43,21 @@ const employeeRoute = express.Router();
 *               example: 'No data found'
 */
 
-employeeRoute.get("/", async (req, res) => {
+const getEmployee = async (req, res) => {
     let data = await employeeService.getEmployee();
     if (data.length > 0)
         res.send(data);
     else {
         res.status(404).json("No data found");
     }
-})
-
+}
 
 /**
 * @swagger
 * /employee/{id}:
 *   get:
+*     security: 
+*          - Bearer: []
 *     description: Retrieve employee from the server.
 *     tags: [Employee]
 *     parameters:
@@ -112,7 +109,7 @@ employeeRoute.get("/", async (req, res) => {
 *               example: 'Invalid Id format'    
 */
 
-employeeRoute.get("/:id", async (req, res) => {
+const getEmployeeById = async (req, res) => {
     let isValidObjectId = (id) => {
         const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
@@ -129,12 +126,14 @@ employeeRoute.get("/:id", async (req, res) => {
     } else {
         res.status(400).json("Invalid Id Format");
     }
-})
+}
 
 /**
 * @swagger
 * /employee:
 *     post:
+*      security: 
+*          - Bearer: []
 *      tags: [Employee]
 *      requestBody:
 *        content:
@@ -160,14 +159,33 @@ employeeRoute.get("/:id", async (req, res) => {
 *                 format: date
 *      responses:
 *       '200':
-*         description: employee added successfully
-*       '404':
-*         description: employee not found
+*         description: Success
+*         content:
+*           application/json:
+*            schema:
+*              type: object
+*              properties:
+*                name:
+*                 type: string
+*                address:
+*                 type: string
+*                age:
+*                 type: integer
+*                mobile:
+*                 type: string
+*                is_active:
+*                 type: boolean
+*                date:
+*                 type: string
+*                 format: date
+*                avatar:
+*                  type: string
 *       '500':
 *         description: Internal server error
 */
 
-employeeRoute.post("/", upload.single('avatar'), async (req, res) => {
+const createEmployee = async (req, res) => {
+    console.log(req.body);
     let employee = new employeeModel({
         name: req.body.name,
         address: req.body.address,
@@ -178,12 +196,14 @@ employeeRoute.post("/", upload.single('avatar'), async (req, res) => {
     })
     let data = await employeeService.createEmployee(employee);
     res.send(data);
-})
+}
 
 /**
 * @swagger
 * /employee/{id}:
 *  put:
+*     security: 
+*          - Bearer: []
 *     description: Update an existing employee using its ID.
 *     tags: [Employee]
 *     parameters:
@@ -217,14 +237,39 @@ employeeRoute.post("/", upload.single('avatar'), async (req, res) => {
 *                 format: date 
 *     responses:
 *       '200':
-*         description: employee updated successfully
+*         description: Success
+*         content:
+*           application/json:
+*            schema:
+*              type: object
+*              properties:
+*                name:
+*                 type: string
+*                address:
+*                 type: string
+*                age:
+*                 type: integer
+*                mobile:
+*                 type: string
+*                is_active:
+*                 type: boolean
+*                date:
+*                 type: string
+*                 format: date
+*                avatar:
+*                  type: string 
 *       '404':
-*         description: employee not found
+*         description: No data found
+*         content:
+*           text/plain:
+*             schema:
+*               type: string
+*               example: 'employee not found'
 *       '500':
 *         description: Internal server error
 */
 
-employeeRoute.put("/:id", upload.single('avatar'), async (req, res) => {
+const editEmployee = async (req, res) => {
     let employee = ({
         name: req.body.name,
         address: req.body.address,
@@ -235,12 +280,14 @@ employeeRoute.put("/:id", upload.single('avatar'), async (req, res) => {
     })
     let data = await employeeService.editEmployee(employee, req.params.id);
     res.send(data)
-})
+}
 
 /**
 * @swagger
 * /employee/{id}:
 *  delete:
+*     security: 
+*          - Bearer: []
 *     description: delete an existing employee using its ID.
 *     tags: [Employee]
 *     parameters:
@@ -263,12 +310,12 @@ employeeRoute.put("/:id", upload.single('avatar'), async (req, res) => {
 *           text/plain:
 *             schema:
 *               type: string
-*               example: 'No data found' 
+*               example: 'employee not found' 
 *       '500':
 *         description: Internal server error     
 */
 
-employeeRoute.delete("/:id", async (req, res) => {
+const deleteEmployee = async (req, res) => {
     let isValidObjectId = (id) => {
         const objectIdRegex = /^[0-9a-fA-F]{24}$/;
         return objectIdRegex.test(id);
@@ -284,6 +331,6 @@ employeeRoute.delete("/:id", async (req, res) => {
     } else {
         res.status(400).json("Invalid Id Format");
     }
-})
+}
 
-module.exports = employeeRoute;
+module.exports = { getEmployee, getEmployeeById, createEmployee, editEmployee, deleteEmployee };

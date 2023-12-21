@@ -1,14 +1,11 @@
-const express = require('express');
-const swaggerUi = require('swagger-ui-express');
 const userService = require('../core/services/user-service')
-const swaggerSpecs = require('../swagger');
-const userRoute = express.Router();
-
 
 /**
 *  @swagger 
 * /user:
 *   get:
+*     security: 
+*          - Bearer: []
 *     description: Get a list of all users
 *     tags: [User]
 *     produces:
@@ -34,20 +31,22 @@ const userRoute = express.Router();
 *               example: 'No data found'
 */
 
-userRoute.get("/", async (req, res) => {
-    let data = await userService.getUser();
-    if(data.length>0)
+const getUser = async (req, res) => {
+  let data = await userService.getUser();
+  if (data.length > 0)
     res.send(data);
-    else{
-     res.status(404).json("No data found");   
-    }
-})
+  else {
+    res.status(404).json("No data found");
+  }
+}
 
 
 /**
 * @swagger
 * /user/{id}:
 *   get:
+*     security: 
+*          - Bearer: []
 *     description: Retrieve user from the server.
 *     tags: [User]
 *     parameters:
@@ -89,29 +88,31 @@ userRoute.get("/", async (req, res) => {
 *    
 */
 
-userRoute.get("/:id", async (req, res) => {
-    let isValidObjectId = (id) => {
-        const objectIdRegex = /^[0-9a-fA-F]{24}$/;
-      
-        return objectIdRegex.test(id);
-      };
-      
-      if (isValidObjectId(req.params.id)) {
-        let employee = await userService.getUserById(req.params.id);
-        if(employee.length>0)
-        res.send(employee);
-        else
-         res.status(404).json("No data found");
-    
-      } else {
-        res.status(400).json("Invalid Id Format");
-      }
-})
+const getUserById = async (req, res) => {
+  let isValidObjectId = (id) => {
+    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
+    return objectIdRegex.test(id);
+  };
+
+  if (isValidObjectId(req.params.id)) {
+    let employee = await userService.getUserById(req.params.id);
+    if (employee.length > 0)
+      res.send(employee);
+    else
+      res.status(404).json("No data found");
+
+  } else {
+    res.status(400).json("Invalid Id Format");
+  }
+}
 
 /**
 * @swagger
 * /user:
 *   post:
+*     security: 
+*          - Bearer: []
 *     tags: [User]
 *     requestBody:
 *       required: true
@@ -133,15 +134,17 @@ userRoute.get("/:id", async (req, res) => {
 *         description: Bad request
 */
 
-userRoute.post("/", async (req, res) => {
-    let data = await userService.createUser(req.body);
-    res.send(data);
-})
+const createUser = async (req, res) => {
+  let data = await userService.createUser(req.body);
+  res.send(data);
+}
 
 /**
 * @swagger
 *  /user/{id}:
 *  put:
+*     security: 
+*          - Bearer: []
 *     description: Update an existing user using its ID.
 *     tags: [User]
 *     parameters:
@@ -163,22 +166,38 @@ userRoute.post("/", async (req, res) => {
 *                 type: string 
 *     responses:
 *       '200':
-*         description: user updated successfully
+*         description: Success
+*         content:
+*           application/json:
+*            schema:
+*              type: object
+*              properties:
+*                name:
+*                 type: string
+*                address:
+*                 type: string
 *       '404':
-*         description: user not found
+*         description: No data found
+*         content:
+*           text/plain:
+*             schema:
+*               type: string
+*               example: 'user not found'
 *       '500':
 *         description: Internal server error
 */
 
-userRoute.put("/:id", async (req, res) => {
-    let data = await userService.editUser(req.body, req.params.id);
-    res.send(data)
-})
+const editUser = async (req, res) => {
+  let data = await userService.editUser(req.body, req.params.id);
+  res.send(data)
+}
 
 /**
 * @swagger
 * /user/{id}:
 *  delete:
+*     security: 
+*          - Bearer: []
 *     description: delete an existing user using its ID.
 *     tags: [User]
 *     parameters:
@@ -206,22 +225,22 @@ userRoute.put("/:id", async (req, res) => {
 *         description: Internal server error     
 */
 
-userRoute.delete("/:id", async (req, res) => {
-    let isValidObjectId = (id) => {
-        const objectIdRegex = /^[0-9a-fA-F]{24}$/;  
+const deleteUser = async (req, res) => {
+  let isValidObjectId = (id) => {
+    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
     return objectIdRegex.test(id);
-};
+  };
 
   if (isValidObjectId(req.params.id)) {
-  let data=await userService.deleteUser(req.params.id);
-  if(data.deletedCount>0)
-  res.send("user deleted successfully");
-  else
-  res.status(404).json("No data found");
+    let data = await userService.deleteUser(req.params.id);
+    if (data.deletedCount > 0)
+      res.send("user deleted successfully");
+    else
+      res.status(404).json("No data found");
 
   } else {
-  res.status(400).json("Invalid Id Format");
+    res.status(400).json("Invalid Id Format");
   }
-})
+}
 
-module.exports = userRoute;
+module.exports = { getUser, getUserById, createUser, editUser, deleteUser };

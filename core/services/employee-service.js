@@ -1,4 +1,3 @@
-
 const employeeModel = require('../schema/employee-schema');
 
 const getEmployee = async function () {
@@ -7,19 +6,17 @@ const getEmployee = async function () {
         return data;
     } catch (err) {
         console.log(err);
-        return 
+        return
     }
-
 }
 
 const getEmployeeById = async function (id) {
     try {
-        const data = await employeeModel.find({ _id: id })
+        const data = await employeeModel.find({ user_id: id })
         return data;
     } catch (err) {
         console.log(err);
     }
-
 }
 
 const createEmployee = async function (employee) {
@@ -38,7 +35,6 @@ const editEmployee = async function (employee, id) {
     } catch (err) {
         console.log(err);
     }
-
 }
 
 const deleteEmployee = async function (id) {
@@ -48,7 +44,6 @@ const deleteEmployee = async function (id) {
     } catch (err) {
         console.log(err);
     }
-
 }
 
 module.exports = { getEmployee, getEmployeeById, deleteEmployee, editEmployee, createEmployee }

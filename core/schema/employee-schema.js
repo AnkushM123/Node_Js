@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-
+const Schema = mongoose.Schema;
 
 const employeeSchema = mongoose.Schema({
   user_id: {
-    type: String
+    type: Schema.Types.ObjectId,
+    ref: 'user'
   },
   name: {
     type: String,
